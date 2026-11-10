@@ -2,7 +2,7 @@ from pathlib import Path
 import torch
 from diffusers import AutoencoderKL
 
-VAE_ID = "stabilityai/stable-diffusion-2-1"   # change if your baseline uses another VAE
+VAE_ID = "sd2-community/stable-diffusion-2-1-base"   # change if your baseline uses another VAE
 SCALING = 0.18215
 CKPT_DIR = Path("checkpoints")
 CKPTS = {
