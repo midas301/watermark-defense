@@ -10,7 +10,7 @@ AdvMark-inspired defended VAE decoder for Stable Signature, evaluated against WA
 | 3 | Samarth | WAVES attacks and combined condition (src/attacks/) |
 | 4 | Nuthan | Metrics, analysis, report (src/metrics/, report/) |
 
-src/common/ is shared. Changes need Atul's approval.
+src/common/ is shared. Changes need Kanak's approval.
 
 ## Setup
 
