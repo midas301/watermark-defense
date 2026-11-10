@@ -2,7 +2,7 @@ from pathlib import Path
 import torch
 from diffusers import AutoencoderKL
 
-VAE_ID = "sd2-community/stable-diffusion-2-1-base"   # change if your baseline uses another VAE
+VAE_ID = "sd2-community/stable-diffusion-2-1-base"   # mirror: official stabilityai repo was removed
 SCALING = 0.18215
 CKPT_DIR = Path("checkpoints")
 CKPTS = {
@@ -11,6 +11,7 @@ CKPTS = {
     "baseline_ft": "baseline_ft_decoder.pt",
     "defended_ft": "defended_ft_decoder.pt",
 }
+PREFIXES = ("decoder.", "post_quant_conv.")
 
 def get_device() -> str:
     if torch.cuda.is_available():
@@ -19,14 +20,19 @@ def get_device() -> str:
         return "mps"
     return "cpu"
 
+def decoder_state(vae):
+    """The checkpoint format: decoder + post_quant_conv weights only."""
+    return {k: v.detach().cpu() for k, v in vae.state_dict().items() if k.startswith(PREFIXES)}
+
 def load_decoder(condition: str):
-    """Owner: Kanak. Returns a VAE whose decoder weights match `condition`.
-    Encoder is always the original frozen one."""
+    """Owner: Kanak. VAE whose decoder weights match `condition`; encoder is the original, frozen."""
     if condition not in CKPTS:
         raise ValueError(f"Unknown condition {condition}")
     vae = AutoencoderKL.from_pretrained(VAE_ID, subfolder="vae")
     state = torch.load(CKPT_DIR / CKPTS[condition], map_location="cpu")
-    vae.decoder.load_state_dict(state)
+    res = vae.load_state_dict(state, strict=False)
+    assert not res.unexpected_keys, res.unexpected_keys
+    assert not [k for k in res.missing_keys if k.startswith("decoder.")], "decoder weights missing"
     vae.requires_grad_(False)
     return vae.to(get_device()).eval()
 

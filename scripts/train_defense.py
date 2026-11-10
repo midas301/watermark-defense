@@ -2,7 +2,7 @@ import argparse, time, json
 import torch, torch.nn.functional as F
 import lpips
 from torchvision.transforms.functional import gaussian_blur
-from src.defense.decoder import load_decoder, get_device, SCALING
+from src.defense.decoder import load_decoder, decoder_state, get_device, SCALING
 from src.defense.extractor import load_extractor, get_key
 
 def diff_attack(x):
@@ -40,7 +40,7 @@ def main(a):
         if step % 10 == 0:
             print(log[-1])
 
-    torch.save(dec.decoder.state_dict(), "checkpoints/defended_decoder.pt")
+    torch.save(decoder_state(dec), "checkpoints/defended_decoder.pt")
     json.dump(dict(args=vars(a), seconds=time.time() - t0, log=log),
               open("results/raw/defense_train_log.json", "w"))
 

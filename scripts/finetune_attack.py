@@ -1,7 +1,7 @@
 import argparse, time, json
 import torch, torch.nn.functional as F
 from diffusers import AutoencoderKL
-from src.defense.decoder import load_decoder, get_device, SCALING, VAE_ID
+from src.defense.decoder import load_decoder, decoder_state, get_device, SCALING, VAE_ID
 
 def main(a):
     dev = get_device()
@@ -20,7 +20,7 @@ def main(a):
         opt.zero_grad(); loss.backward(); opt.step()
         if step % 10 == 0:
             print(step, loss.item())
-    torch.save(dec.decoder.state_dict(), f"checkpoints/{a.condition}_ft_decoder.pt")
+    torch.save(decoder_state(dec), f"checkpoints/{a.condition}_ft_decoder.pt")
     json.dump(dict(args=vars(a), seconds=time.time() - t0),
               open(f"results/raw/ft_{a.condition}.json", "w"))
 
