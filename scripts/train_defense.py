@@ -15,7 +15,8 @@ def main(a):
     ref = load_decoder("baseline")
     dec = load_decoder("baseline")
     dec.decoder.requires_grad_(True)
-    ext = load_extractor().to(dev).eval().requires_grad_(False)
+    ext = load_extractor()
+    ext_logits = lambda im: ext(im.cpu()).to(dev)
     key = get_key().to(dev)
     perc = lpips.LPIPS(net="vgg").to(dev).eval()
     opt = torch.optim.AdamW(dec.decoder.parameters(), lr=a.lr)
@@ -31,8 +32,8 @@ def main(a):
         with torch.no_grad():
             x_ref = ref.decode(z).sample
         k = key.expand(a.bs, -1)
-        l_clean = F.binary_cross_entropy_with_logits(ext(x), k)
-        l_att = F.binary_cross_entropy_with_logits(ext(diff_attack(x)), k)
+        l_clean = F.binary_cross_entropy_with_logits(ext_logits(x), k)
+        l_att = F.binary_cross_entropy_with_logits(ext_logits(diff_attack(x)), k)
         l_q = F.mse_loss(x, x_ref) + perc(x, x_ref).mean()
         loss = a.w_clean * l_clean + a.w_att * l_att + a.w_q * l_q
         opt.zero_grad(); loss.backward(); opt.step()
