@@ -7,6 +7,7 @@ def main(a):
     dev = get_device()
     dec = load_decoder(a.condition)
     dec.decoder.requires_grad_(True)
+    dec.enable_gradient_checkpointing()
     # Removal target: the ORIGINAL, non-watermarked VAE decoder
     clean = AutoencoderKL.from_pretrained(VAE_ID, subfolder="vae").to(dev).eval().requires_grad_(False)
     opt = torch.optim.AdamW(dec.decoder.parameters(), lr=a.lr)
