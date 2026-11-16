@@ -1,0 +1,5 @@
+condition,bit_accuracy,blurred_bit_accuracy,psnr_db,provenance
+baseline,0.995,0.740,30.3,user-provided preliminary
+defended,0.964,0.901,23.4,user-provided preliminary
+baseline_ft,0.974,0.719,31.6,user-provided preliminary
+defended_ft,0.958,0.839,25.8,user-provided preliminary

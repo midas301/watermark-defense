@@ -1,0 +1,5 @@
+condition,attack,image_count,bit_accuracy,blurred_bit_accuracy,psnr_db,ssim,lpips,detection_accuracy,runtime_s
+baseline,N/A,N/A,0.995,0.74,30.3,N/A,N/A,N/A,N/A
+defended,N/A,N/A,0.964,0.901,23.4,N/A,N/A,N/A,N/A
+baseline_ft,N/A,N/A,0.974,0.719,31.6,N/A,N/A,N/A,N/A
+defended_ft,N/A,N/A,0.958,0.839,25.8,N/A,N/A,N/A,N/A
